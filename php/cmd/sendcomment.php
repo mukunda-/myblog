@@ -5,6 +5,7 @@ global $CONFIG;
 $email = $_POST['email'] ?? "";
 $ident = $_POST['ident'] ?? "";
 $comment = $_POST['comment'] ?? "";
+$article = $_POST['article'] ?? "";
 
 if( $comment == "" || $_POST['abc'] != 'abc' ) {
     header( "Location: /" );
@@ -16,6 +17,7 @@ A new comment has been submitted from your blog.
 
 Email address: $email
 Share identity: $ident
+Article: $article
 
 $comment
 ");
