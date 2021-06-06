@@ -15,39 +15,119 @@ $PathArg = '';
 $MediaPrefix = 'media';
 
 //----------------------------------------------------------------------------------------
+function erase_substr( $text, $start, $length ) {
+   return substr( $text, 0, $start ) . substr( $text, $start + $length );
+}
+
+//----------------------------------------------------------------------------------------
 function make_html( $text ) {
    global $CONFIG, $MediaPrefix;
 
-   $text = htmlspecialchars( $text );
+   // First get rid of pesky CR.
+   $text = str_replace( "\r\n", "\n", $text );
+   $lines = explode( "\n", $text );
+
+   $previous_format = '';
+
+   foreach( $lines as &$line ) {
+      $formatters = [];
+      $line = preg_replace_callback( '/\s*\[(.+)\]\(([^)]+)\)/',
+         function( array $matches ) use (&$formatters, &$previous_format) {
+            $pattern = htmlspecialchars($matches[1]);
+            $format = $matches[2];
+            if( $format == '-' ) {
+               $format = $previous_format;
+            } else {
+               $previous_format = $format;
+            }
+            $formatters[] = [
+               'pattern' => $pattern,
+               'format' => $format
+            ];
+            return '';
+         }, $line );
+
+      $line = htmlspecialchars( $line );
+      
+      foreach( $formatters as $formatter ) {
+         $pattern = $formatter['pattern'];
+         $line = preg_replace_callback( "+$pattern+", function( $matches ) use ($formatter) {
+            if( count($matches) == 3 ) {
+               return "$matches[1]<a href=\"$formatter[format]\">$matches[2]</a>";
+            } else if( count($matches) == 4 ) {
+               return "$matches[1]<a href=\"$formatter[format]\">$matches[2]</a>$matches[3]";
+            } else {
+               return "<a href=\"$formatter[format]\">$matches[0]</a>";
+            }
+         }, $line );
+      }
+
+/*
+      while( preg_match('/\s*\[([^\]]+)\]\(([^)]+)\)/', $line, $matches) ) {
+         $line = preg_replace( '/\s*\[([^\]]+)\]\(([^)]+)\)/', '', $line, 1 );
+         $url = $matches[2];
+         if( $url == '-' ) {
+            $url = $previous_url;
+         } else {
+            $previous_url = $url;
+         }
+         if( $matches[2] == '.' ) {
+            
+         }
+         $line = preg_replace(
+      } */
+   }
+
+   $text = implode( "\n", $lines );
+
    // Find media items.
-   $text = preg_replace_callback( '/\[([^\s\]]+\.(png|jpg|mp4))\]/',
+   $text = preg_replace_callback( '/\[([^\s\]]+\.(png|jpg|mp4|gif))\]/',
       function( array $matches ) {
          global $CONFIG, $MediaPrefix;
          
          $media_path = $MediaPrefix . '/' . $matches[1];
          if( file_exists($CONFIG['webroot'] . "/$media_path") ) {
             $ext = $matches[2];
-            if( $ext == 'jpg' || $ext == 'png' ) {
+            if( $ext == 'jpg' || $ext == 'png' || $ext == 'gif' ) {
                return "<a href=\"$media_path\"><img src=\"$media_path\"></a>";
-            } else {
+            } else if( $ext == 'mp4' ) {
                // todo.
+            } else {
+               // Do nothing.
             }
          }
          return $matches[0];
       }, $text );
+
+/*
+   $offset = 0;
+   while( preg_match( '/\s*\[([^\]]+)\]\(([^)]+)\)/', $text, $matches, PREG_CAPTURE_OFFSET, $offset ) {
+
+      // Compute the start of this line.
+      // strrpos from the link position.
+      $linkoffset = $matches[0][1];
+      $startofline = strrpos( $text, "\n", -(strlen( $text ) - $linkoffset) );
+      if( $startofline === FALSE ) $startofline = 0;
+
+      // Erase the match.
+      $text = erase_substr( $text, $linkoffset, strlen($matches[0][0]) );
+      $pattern = str_replace( " ", "[\spreg_quote($matches[1][0])
+
+   }
    
    // Find links.
-
-   $links = [];
+   $links   = [];
+   $finders = [];
+   $dummy   = null;
    
    $text = preg_replace_callback( '/\[([^\]]+)\]\(([^)]+)\)/',
-      function( array $matches ) use (&$links) {
+      function( array $matches ) use (&$finders) {
          $links[] = [
             'text' => $matches[1],
             'link' => $matches[2]
          ];
          return '';
-      }, $text );
+      }, $text, -1, $dummy, PREG_OFFSET_CAPTURE );
 
    // Clean up right edges.
    $text = preg_replace( '/ *\n/', "\n", $text );
@@ -65,7 +145,7 @@ function make_html( $text ) {
       }, $text );
       
    }
-
+*/
    return trim($text);
 }
 
