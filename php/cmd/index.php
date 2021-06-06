@@ -1,26 +1,37 @@
 <?php
 
-put("
-* Welcome to my blog. Just notes and musings here. I'm a
-* self-taught programmer and a support engineer. I work
-* remotely and pretty much live online. Hope you find
-* something useful. Opinions are my own.
-
-* Twitter: twitter.com/_mukunda
-* GitHub: github.com/mukunda-
-* LinkedIn: linkedin.com/in/mukunda-johnson
-* Email: mukunda@mukunda.com
-* Homepage: mukunda.com
-
-[twitter.com/_mukunda](https://twitter.com/_mukunda) 
-[github.com/mukunda-](https://github.com/mukunda-)
-[linkedin.com/in/mukunda-johnson](https://linkedin.com/in/mukunda-johnson/)
-[mukunda@mukunda.com](mailto:mukunda@mukunda.com)
-[(Homepage: )(mukunda.com)](https://mukunda.com)
-");
+put( get_motd() );
 
 put( "" );
-put( "-- Recent entries --" );
+
+function show_browse() {
+   $years = get_years();
+   $yearcount = 0;
+   for( $index = 0; $index < count($years); $index += 7 ) {
+      $batch = array_slice( $years, $index, 7 );
+      
+      if( $index == 0 ) {
+         $prefix = "* Browse articles: ";
+      } else {
+         $prefix = "*                  ";
+      }
+      $formats = implode( " ", array_map( function( $a ) {
+         return "[$a](/list/$a)";
+      }, $batch ));
+
+      $batch = implode( ", ", $batch );
+      put( "$prefix$batch $formats" );
+   }
+}
+
+show_browse();
+
+put( "" );
+put( "
+------------------------------------------------------------
+Recent Articles
+------------------------------------------------------------
+" );
 put( "" );
 
 $recent_entries = get_recent_blogs();
@@ -30,18 +41,23 @@ foreach( $recent_entries as $entry ) {
    $linkpattern = preg_quote( $name, "+" );
    $file = $entry['file'];
    $date = date( "Y-m-d", $entry['cdate'] );
-   put( "* Name: $name [$linkpattern](/cat/$file)" );
+   
+   $name = explode( "\n", $name );
+   put( "
+************************************************************
+");
+   put( "* Name: $name[0] [(Name: )(.*)](/cat/$file)" );
+   array_shift( $name );
+   foreach( $name as $line ) {
+      put( "        $line [( *)(.*)](/cat/$file)", false );
+   }
+   
    put( "* Date: $date" );
    put( "" );
    put( "$entry[preview]" );
    put( "" );
 }
 
-put( "-- Browse --" );
-put( "" );
-
-$years = get_years();
-
-foreach( $years as $year ) {
-   put( "* $year [$year](/list/$year)" );  
-}
+put( "
+////////////////////////////////////////////////////////////
+");

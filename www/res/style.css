@@ -2,7 +2,7 @@
 
 main {
    margin: 22px;
-   width: 80ch;
+   width: 90ch;
    
 }
 
@@ -16,7 +16,7 @@ body {
 }
 
 pre {
-   font-family: "PT Mono", monospace;
+   font-family: inherit;
    font-size: 18pt;
    display: table;
    border-collapse: separate;
@@ -24,11 +24,26 @@ pre {
 
 }
 
+input, textarea, select, option {
+   font-family: inherit;
+   font-size: inherit;
+   background-color: #002952;
+   color: inherit;
+   border: none;
+   padding: 0px;
+}
+
+textarea:focus {
+   outline: none;
+}
+
 img {
    max-width: 100%;
 }
 
-a {
+a, input[type="submit"] {
    color: #3ef;
+   cursor: pointer;
+   text-decoration: underline;
 }
 

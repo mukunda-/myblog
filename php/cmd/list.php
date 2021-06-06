@@ -26,7 +26,14 @@ foreach( $meta as $m ) {
    $date = date("Y-m-d", $m['cdate']);
    $name = $m['name'] ?? "<Unknown name>";
    $linkpattern = preg_quote($name,"+");
-   put( "* $date $name [$linkpattern](/cat/$file)" );
+
+   $name = explode( "\n", $name );
+   put( "* $date $name[0] [(\* \d\d\d\d-\d\d-\d\d )(.*)](/cat/$file)" );
+   array_shift( $name );
+   foreach( $name as $line ) {
+      put( "             $line [( *)(.*)](/cat/$file)", false );
+   }
+   
 }
 
 put( "" );

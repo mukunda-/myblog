@@ -31,7 +31,7 @@ function make_html( $text ) {
 
    foreach( $lines as &$line ) {
       $formatters = [];
-      $line = preg_replace_callback( '/\s*\[(.+)\]\(([^)]+)\)/',
+      $line = preg_replace_callback( '/\s*\[(.+?)\]\(([^)]+)\)/',
          function( array $matches ) use (&$formatters, &$previous_format) {
             $pattern = htmlspecialchars($matches[1]);
             $format = $matches[2];
@@ -51,7 +51,7 @@ function make_html( $text ) {
       
       foreach( $formatters as $formatter ) {
          $pattern = $formatter['pattern'];
-         $line = preg_replace_callback( "+$pattern+", function( $matches ) use ($formatter) {
+         $line = preg_replace_callback( "`$pattern`", function( $matches ) use ($formatter) {
             if( count($matches) == 3 ) {
                return "$matches[1]<a href=\"$formatter[format]\">$matches[2]</a>";
             } else if( count($matches) == 4 ) {
@@ -146,7 +146,7 @@ function make_html( $text ) {
       
    }
 */
-   return trim($text);
+   return $text;
 }
 
 //----------------------------------------------------------------------------------------
@@ -166,9 +166,25 @@ function export_html() {
 }
 
 //----------------------------------------------------------------------------------------
-function put( string $text ) {
+function put( string $text, $trim = true ) {
    global $Output;
-   $Output["content"][] = make_html( trim($text) );
+   if( $trim ) {
+      $text = trim( $text );
+   }
+   if( preg_match('/^{{html}}/', $text) ) {
+      $Output["content"][] = $text;
+   } else {
+      $Output["content"][] = make_html( $text );
+   }
+}
+
+//----------------------------------------------------------------------------------------
+function putraw( string $text, $trim = true ) {
+   global $Output;
+   if( $trim ) {
+      $text = trim( $text );
+   }
+   $Output["content"][] = $text;
 }
 
 //----------------------------------------------------------------------------------------
@@ -178,17 +194,21 @@ function start_proc( string $dir = "" ) {
    
    global $CONFIG, $Command, $PathArg;
 
-   $args = "";
+   $args = [];
+
+   if( $PathArg != "" ) {
+      $args[] = $PathArg;
+   }
 
    foreach( $_GET as $a => $b ) {
       if( $a == "q" ) {
          
       } else {
-         $args .= " --$a $b";
+         $args[] = "--$a $b";
       }
    }
 
-   $args = $PathArg . $args;
+   $args = implode( " ", $args );
 
    put( trim("$CONFIG[user]@$CONFIG[host]:$CONFIG[dir]$dir# ./$Command $args") );
    put( "" );
@@ -221,7 +241,7 @@ function get_file_meta( string $path ) {
       }
    }
 
-   $preview_lines = 6;
+   $preview_lines = 10;
    while( !feof($f) ) {
       $line = trim( fgets($f) );
       $meta['preview'] .= "$line\n";
@@ -326,11 +346,22 @@ function start_route() {
       case "list":
          include( "../php/cmd/list.php" );
          break;
+      case "comment":
+         include( "../php/cmd/comment.php" );
+         break;
+      case "sendcomment":
+         include( "../php/cmd/sendcomment.php" );
+         break;
       default:
          include( "../php/404.php" );
    }
 
    end_proc();
+}
+
+function get_motd() {
+   global $CONFIG;
+   return $CONFIG['motd'];
 }
 
 start_route();
