@@ -1,0 +1,10 @@
+<?php
+
+$CONFIG = [
+    "page_title" => 'Mukunda Johnson\'s Blog',
+    "user" => "guest",
+    "host" => "mukunda.com",
+    "dir" => "/blog",
+    "webroot" => realpath(__DIR__ . "/../www"),
+    "timezone" => "America/Chicago"
+];

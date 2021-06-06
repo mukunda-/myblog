@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Mono&display=swap');
+
+main {
+   margin: 22px;
+   width: 80ch;
+   
+}
+
+body {
+   font-family: "PT Mono", monospace;
+   font-size: 18pt;
+   background-color:#002952;
+   color: #eee;
+   margin-top: 0px;
+   white-space: pre;
+}
+
+pre {
+   font-family: "PT Mono", monospace;
+   font-size: 18pt;
+   display: table;
+   border-collapse: separate;
+   display: inline-block;
+
+}
+
+img {
+   max-width: 100%;
+}
+
+a {
+   color: #3ef;
+}
+
