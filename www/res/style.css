@@ -38,7 +38,7 @@ textarea:focus {
 }
 
 img {
-   max-width: 100%;
+   max-width: 60ch;
 }
 
 a, input[type="submit"] {

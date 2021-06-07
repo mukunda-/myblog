@@ -14,9 +14,9 @@ if( !file_exists("content/$PathArg") ) {
     put( "File is not a file..." );
 } else {
     put( file_get_contents( "content/$PathArg" ) );
+    put( "" );
+    put( "Send the author a comment [.+](/comment?article=$PathArg)" );
 }
 
-put( "" );
-put( "Send the author a comment [.+](/comment?article=$PathArg)" );
 put( "" );
 put( "<< Index [<< Index](/)" );
