@@ -2,8 +2,10 @@
 
 main {
    margin: 22px;
+   /* Content should only be 60ch, but this is the "extended" width for code snippets that
+      can have horizontal scrolling. device-width is set to a default zoom to make only
+      60ch visible by default. */
    width: 90ch;
-   
 }
 
 body {
@@ -15,15 +17,7 @@ body {
    white-space: pre;
 }
 
-pre {
-   font-family: inherit;
-   font-size: 18pt;
-   display: table;
-   border-collapse: separate;
-   display: inline-block;
-
-}
-
+/* Mostly for the comment page. */
 input, textarea, select, option {
    font-family: inherit;
    font-size: inherit;
@@ -37,13 +31,14 @@ textarea:focus {
    outline: none;
 }
 
+/* Max width is the content width. */
 img {
    max-width: 60ch;
 }
 
+/* Style submit buttons just like links. */
 a, input[type="submit"] {
    color: #3ef;
    cursor: pointer;
    text-decoration: underline;
 }
-
