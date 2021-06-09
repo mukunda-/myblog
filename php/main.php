@@ -61,21 +61,6 @@ function make_html( $text ) {
             }
          }, $line );
       }
-
-/*
-      while( preg_match('/\s*\[([^\]]+)\]\(([^)]+)\)/', $line, $matches) ) {
-         $line = preg_replace( '/\s*\[([^\]]+)\]\(([^)]+)\)/', '', $line, 1 );
-         $url = $matches[2];
-         if( $url == '-' ) {
-            $url = $previous_url;
-         } else {
-            $previous_url = $url;
-         }
-         if( $matches[2] == '.' ) {
-            
-         }
-         $line = preg_replace(
-      } */
    }
 
    $text = implode( "\n", $lines );
@@ -99,53 +84,6 @@ function make_html( $text ) {
          return $matches[0];
       }, $text );
 
-/*
-   $offset = 0;
-   while( preg_match( '/\s*\[([^\]]+)\]\(([^)]+)\)/', $text, $matches, PREG_CAPTURE_OFFSET, $offset ) {
-
-      // Compute the start of this line.
-      // strrpos from the link position.
-      $linkoffset = $matches[0][1];
-      $startofline = strrpos( $text, "\n", -(strlen( $text ) - $linkoffset) );
-      if( $startofline === FALSE ) $startofline = 0;
-
-      // Erase the match.
-      $text = erase_substr( $text, $linkoffset, strlen($matches[0][0]) );
-      $pattern = str_replace( " ", "[\spreg_quote($matches[1][0])
-
-   }
-   
-   // Find links.
-   $links   = [];
-   $finders = [];
-   $dummy   = null;
-   
-   $text = preg_replace_callback( '/\[([^\]]+)\]\(([^)]+)\)/',
-      function( array $matches ) use (&$finders) {
-         $links[] = [
-            'text' => $matches[1],
-            'link' => $matches[2]
-         ];
-         return '';
-      }, $text, -1, $dummy, PREG_OFFSET_CAPTURE );
-
-   // Clean up right edges.
-   $text = preg_replace( '/ *\n/', "\n", $text );
-
-   foreach( $links as $link ) {
-      $pattern = $link['text'];
-      $text = preg_replace_callback( "+$pattern+", function( $matches ) use ($link) {
-         if( count($matches) == 3 ) {
-            return "$matches[1]<a href=\"$link[link]\">$matches[2]</a>";
-         } else if( count($matches) == 4 ) {
-            return "$matches[1]<a href=\"$link[link]\">$matches[2]</a>$matches[3]";
-         } else {
-            return "<a href=\"$link[link]\">$matches[0]</a>";
-         }
-      }, $text );
-      
-   }
-*/
    return $text;
 }
 
